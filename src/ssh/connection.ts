@@ -1,4 +1,5 @@
 import { Client, type ClientChannel, type ConnectConfig, type ExecOptions } from 'ssh2';
+import type { Duplex } from 'node:stream';
 import type { ConnectionInfo, Profile, ResolvedCredentials, ExecOpts, CommandResult, SessionOpts } from '../types.js';
 import { FROZEN_ALGORITHMS, FORWARDED_ALGORITHMS } from './algorithms.js';
 import { verifyHostKey, fingerprintPublicKey, type HostKeyMode } from './host-key.js';
@@ -117,7 +118,8 @@ export class SSHConnection {
   private lastActivity = new Date();
   private knownHostsStore: Map<string, string>;
   private hostKeyMode: HostKeyMode;
-  private bastionSock: ClientChannel | null;
+  /** The stream the SSH session runs over instead of a TCP socket: a bastion channel (via) or a proxyCommand's stdio. */
+  private bastionSock: Duplex | null;
   /** Set by a reload that closes this connection; see retire(). */
   private retired = false;
 
@@ -126,7 +128,7 @@ export class SSHConnection {
     credentials: ResolvedCredentials,
     knownHostsStore: Map<string, string>,
     hostKeyMode: HostKeyMode = 'tofu',
-    bastionSock?: ClientChannel,
+    bastionSock?: Duplex,
   ) {
     this.currentProfile = profile;
     this.credentials = credentials;
@@ -326,7 +328,7 @@ export class SSHConnection {
         port: this.profile.port,
         username: this.profile.user,
         // Over a bastion's channel, chacha20 last: see FORWARDED_ALGORITHMS (#315).
-        algorithms: (this.bastionSock ? FORWARDED_ALGORITHMS : FROZEN_ALGORITHMS) as ConnectConfig['algorithms'],
+        algorithms: (this.bastionSock && !this.profile.proxyCommand ? FORWARDED_ALGORITHMS : FROZEN_ALGORITHMS) as ConnectConfig['algorithms'],
         hostVerifier: (key: Buffer) => {
           // The pin used to be checked here, as a `return false` ahead of
           // verifyHostKey. That made it reject-only: a *matching* pin fell
@@ -592,6 +594,11 @@ export class SSHConnection {
     if (this.client) {
       this.client.end();
       this.client = null;
+    }
+    // A proxyCommand's process is owned by this connection: end it with the session rather than
+    // leave it to the remote side to hang up.
+    if (this.profile.proxyCommand && this.bastionSock && !this.bastionSock.destroyed) {
+      this.bastionSock.destroy();
     }
     this.connecting = null;
     this.connected = false;

@@ -62,6 +62,7 @@ const FIELD_CLASS: Record<keyof Profile, { cls: FieldClass; changed: unknown }> 
   cert: { cls: 'connection', changed: true },
   keyboardInteractive: { cls: 'connection', changed: 'password' },
   via: { cls: 'connection', changed: 'jump2' },
+  proxyCommand: { cls: 'connection', changed: 'nc -X connect -x 127.0.0.1:7890 %h %p' },
   trustedHostKey: { cls: 'connection', changed: 'SHA256:def' },
   workdir: { cls: 'session', changed: '/srv/app' },
   tty: { cls: 'session', changed: true },

@@ -1,4 +1,11 @@
-# SSH MCP Server v2
+# SSH MCP Server v2 — ssh-mcp-plus
+
+> **Fork of [tufantunc/ssh-mcp](https://github.com/tufantunc/ssh-mcp)** (MIT), tracking upstream `main`. It adds:
+>
+> - **`proxyCommand`** per profile: reach hosts behind an HTTP/SOCKS proxy or any custom tunnel, as OpenSSH's ProxyCommand (`nc -X connect -x 127.0.0.1:7890 %h %p`). See [ProxyCommand](#proxycommand).
+> - **`--importSshConfig`**: print `[[profiles]]` from `~/.ssh/config` aliases, so hosts that already work with `ssh <alias>` need no second description. See [Importing from ~/.ssh/config](#importing-from-sshconfig).
+>
+> Upstream changes are merged from the `upstream` remote; fork changes live on `main` here.
 
 [![NPM Version](https://img.shields.io/npm/v/ssh-mcp)](https://www.npmjs.com/package/ssh-mcp)
 [![Downloads](https://img.shields.io/npm/dm/ssh-mcp)](https://www.npmjs.com/package/ssh-mcp)
@@ -406,6 +413,42 @@ set it and any agent can omit it, so it is useful for attributing sessions you
 already trust and must not be used as an authorization or intrusion-detection
 input. Authoritative attribution belongs to the key or principal that
 authenticated.
+
+### ProxyCommand
+
+For a host reached through a local proxy or tunnel instead of a bastion profile, give the command whose stdin/stdout carry the SSH stream, as in OpenSSH:
+
+```toml
+[[profiles]]
+name = "behind-http-proxy"
+host = "203.0.113.7"
+port = 14973
+user = "alice"
+auth = "key"
+keyRef = "~/.ssh/id_ed25519"
+proxyCommand = "nc -X connect -x 127.0.0.1:7890 %h %p"   # HTTP CONNECT proxy
+# proxyCommand = "nc -X 5 -x 127.0.0.1:1080 %h %p"      # SOCKS5
+# proxyCommand = "ssh -W %h:%p -J hop1 hop2"            # a chain walked by the system ssh
+```
+
+- Tokens: `%h` host, `%p` port, `%r` user, `%n` profile name, `%%`. Any other token is refused at connect time rather than passed to the shell.
+- The command runs through `/bin/sh -c` (`cmd.exe /c` on Windows) on the machine running ssh-mcp. It lives and dies with the connection: closing the connection kills it, and if it exits early the error carries the tail of its stderr.
+- `via` and `proxyCommand` are exclusive. Changing `proxyCommand` on a reload closes the live connection.
+- The command is operator configuration, executed as given: keep the config file's permissions as strict as for keys.
+
+### Importing from ~/.ssh/config
+
+```bash
+ssh-mcp --importSshConfig=bastion,inner,behind-http   # selected aliases
+ssh-mcp --importSshConfig                             # every literal alias
+ssh-mcp --importSshConfig=web --sshConfig=/path/to/ssh_config
+```
+
+Prints `[[profiles]]` blocks to stdout and exits; nothing is written and no host is contacted. It follows OpenSSH's rules for `Host` patterns (`*`, `?`, `!`), first-value-wins and `Include`, and maps `HostName`, `User`, `Port`, `IdentityFile` (or the first default key that exists), `ConnectTimeout`, `ProxyJump` and `ProxyCommand`:
+
+- `ProxyJump h` becomes `via = "h"` when `h` is imported too, otherwise `proxyCommand = "ssh -W %h:%p h"`; a chain is walked by the system ssh.
+- `ProxyCommand ssh ... -W %h:%p h` to an imported `h` becomes `via = "h"`.
+- Options with no profile equivalent (forwards, `ForwardAgent`, `Match` blocks, ...) are reported as `# NOTE` comments above the profile. Review the output before pasting it.
 
 ### ProxyJump (Bastion)
 
@@ -1152,6 +1195,8 @@ Secrets are **never** passed as CLI arguments. A flag not in this table is refus
 | `--otelEndpoint` | — | OTLP/HTTP endpoint for OpenTelemetry traces |
 | `--otelServiceName` | ssh-mcp | Service name reported on trace spans |
 | `--dumpToolHashes` | — | Print SHA-256 hashes of the tool descriptions and exit |
+| `--importSshConfig` | all aliases | Print `[[profiles]]` for the given comma-separated `~/.ssh/config` aliases (all literal aliases if empty) and exit |
+| `--sshConfig` | `~/.ssh/config` | ssh_config file read by `--importSshConfig` |
 
 ---
 
