@@ -41,7 +41,7 @@ Host behind-http
   HostName 203.0.113.7
   Port 14973
   User carol
-  ProxyCommand nc -X connect -x 127.0.0.1:17897 %h %p
+  ProxyCommand nc -X connect -x 127.0.0.1:7890 %h %p
   ConnectTimeout 15
 
 Host chain
@@ -90,7 +90,7 @@ describe('importSshHosts', () => {
     const by = Object.fromEntries(profiles.map((p) => [p.name, p]));
     expect(by.bastion).toMatchObject({ host: '192.0.2.1', user: 'ops', auth: 'key', keyRef: join(home, '.ssh', 'work_key') });
     expect(by.inner).toMatchObject({ host: '10.0.0.5', port: 2222, via: 'bastion', keyRef: join(home, '.ssh', 'id_ed25519') });
-    expect(by['behind-http']).toMatchObject({ proxyCommand: 'nc -X connect -x 127.0.0.1:17897 %h %p', connectTimeoutMs: 15000 });
+    expect(by['behind-http']).toMatchObject({ proxyCommand: 'nc -X connect -x 127.0.0.1:7890 %h %p', connectTimeoutMs: 15000 });
     expect(by.included).toMatchObject({ host: '192.0.2.9', user: 'inc' });
   });
 

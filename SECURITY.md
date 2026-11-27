@@ -1,12 +1,14 @@
 # Security Policy
 
+> ssh-mcp-plus inherits ssh-mcp's security model; this policy is adapted from ssh-mcp's. A vulnerability that also affects upstream ssh-mcp should be reported to [tufantunc/ssh-mcp](https://github.com/tufantunc/ssh-mcp/security/advisories/new) as well.
+
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability in SSH MCP Server, please report it responsibly:
 
 1. **DO NOT** open a public GitHub issue.
 2. Report it privately, either way:
-   - [Open a private security advisory](https://github.com/tufantunc/ssh-mcp/security/advisories/new) — preferred, since it keeps the report, the fix and the CVE in one thread; or
+   - [Open a private security advisory](https://github.com/MuQY1818/ssh-mcp-plus/security/advisories/new) — preferred, since it keeps the report, the fix and the CVE in one thread; or
    - email <tufan.tunc.91@gmail.com>.
 3. Include:
    - Description of the vulnerability
@@ -327,7 +329,7 @@ SSH MCP Server v2 implements controls that map to common security frameworks. Th
 ### Independent assessment
 
 Everything in the tables below is **self-assessed**. The one continuous outside reading is
-[OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/tufantunc/ssh-mcp), which
+[OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/MuQY1818/ssh-mcp-plus), which
 re-grades the repository weekly and on every change to `main` or to branch protection, and
 publishes the result. Findings also land in the repository's Security tab alongside CodeQL's.
 

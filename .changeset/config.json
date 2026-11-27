@@ -1,6 +1,11 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.1.4/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "tufantunc/ssh-mcp" }],
+  "changelog": [
+    "@changesets/changelog-github",
+    {
+      "repo": "MuQY1818/ssh-mcp-plus"
+    }
+  ],
   "commit": false,
   "fixed": [],
   "linked": [],

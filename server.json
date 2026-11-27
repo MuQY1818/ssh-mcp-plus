@@ -1,19 +1,19 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.tufantunc/ssh-mcp",
-  "title": "SSH — policy-gated remote access",
-  "description": "Policy-gated, audited SSH for Linux and Windows hosts: roles, approvals, and an audit log.",
-  "version": "2.29.0",
-  "websiteUrl": "https://github.com/tufantunc/ssh-mcp#readme",
+  "name": "io.github.MuQY1818/ssh-mcp-plus",
+  "title": "SSH Plus — policy-gated remote access",
+  "description": "Policy-gated, audited SSH (ssh-mcp based) with ProxyCommand profiles and ~/.ssh/config import.",
+  "version": "0.1.0",
+  "websiteUrl": "https://github.com/MuQY1818/ssh-mcp-plus#readme",
   "repository": {
-    "url": "https://github.com/tufantunc/ssh-mcp",
+    "url": "https://github.com/MuQY1818/ssh-mcp-plus",
     "source": "github"
   },
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "ssh-mcp",
-      "version": "2.29.0",
+      "identifier": "ssh-mcp-plus",
+      "version": "0.1.0",
       "transport": {
         "type": "stdio"
       },

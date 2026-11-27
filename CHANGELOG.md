@@ -1,4 +1,12 @@
-# ssh-mcp
+# Changelog
+
+## ssh-mcp-plus 0.1.0
+
+Based on ssh-mcp 2.29.0 (upstream `f247641`). Everything below this entry is ssh-mcp's own changelog.
+
+- **`proxyCommand` profile field.** A local command whose stdio carries the SSH stream, as OpenSSH's ProxyCommand. Tokens `%h %p %r %n %%`; exclusive with `via`; the process is tied to the connection both ways, and an early exit reports the tail of its stderr. Changing it on reload closes the live connection.
+- **`--importSshConfig[=alias,…]` and `--sshConfig=<file>`.** Print `[[profiles]]` for ssh_config aliases (Host patterns, first value wins, `Include`; HostName, User, Port, IdentityFile, ConnectTimeout, ProxyJump, ProxyCommand), with `# NOTE` comments for options that have no profile equivalent.
+- Package renamed to `ssh-mcp-plus` (commands `ssh-mcp-plus` and `ssh-mcp`).
 
 ## 2.29.0
 

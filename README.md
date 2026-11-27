@@ -1,20 +1,36 @@
-# SSH MCP Server v2 — ssh-mcp-plus
+# ssh-mcp-plus
 
-> **Fork of [tufantunc/ssh-mcp](https://github.com/tufantunc/ssh-mcp)** (MIT), tracking upstream `main`. It adds:
->
-> - **`proxyCommand`** per profile: reach hosts behind an HTTP/SOCKS proxy or any custom tunnel, as OpenSSH's ProxyCommand (`nc -X connect -x 127.0.0.1:7890 %h %p`). See [ProxyCommand](#proxycommand).
-> - **`--importSshConfig`**: print `[[profiles]]` from `~/.ssh/config` aliases, so hosts that already work with `ssh <alias>` need no second description. See [Importing from ~/.ssh/config](#importing-from-sshconfig).
->
-> Upstream changes are merged from the `upstream` remote; fork changes live on `main` here.
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![Based on ssh-mcp](https://img.shields.io/badge/based%20on-ssh--mcp%202.29-informational)](https://github.com/tufantunc/ssh-mcp)
 
-[![NPM Version](https://img.shields.io/npm/v/ssh-mcp)](https://www.npmjs.com/package/ssh-mcp)
-[![Downloads](https://img.shields.io/npm/dm/ssh-mcp)](https://www.npmjs.com/package/ssh-mcp)
-[![CI](https://github.com/tufantunc/ssh-mcp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tufantunc/ssh-mcp/actions/workflows/ci.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/tufantunc/ssh-mcp/badge)](https://scorecard.dev/viewer/?uri=github.com/tufantunc/ssh-mcp)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15082/badge)](https://www.bestpractices.dev/projects/15082)
-[![codecov](https://codecov.io/gh/tufantunc/ssh-mcp/graph/badge.svg?branch=main)](https://codecov.io/gh/tufantunc/ssh-mcp)
-[![License](https://img.shields.io/github/license/tufantunc/ssh-mcp)](./LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/tufantunc/ssh-mcp)](https://github.com/tufantunc/ssh-mcp/issues)
+**ssh-mcp-plus** is a policy-gated, audited SSH server for MCP clients (Claude Code, Codex, Cursor, …), **built on [ssh-mcp](https://github.com/tufantunc/ssh-mcp) by Tufan Tunç**. It keeps everything ssh-mcp does — command classification, role × host-group policy, approvals, audit log, sessions, SFTP, hot reload — and adds what real-world host setups need:
+
+| Added in ssh-mcp-plus | What it does |
+|---|---|
+| [`proxyCommand`](#proxycommand) | Reach hosts behind an HTTP/SOCKS proxy or any tunnel, exactly like OpenSSH's `ProxyCommand` (`nc -X connect -x 127.0.0.1:7890 %h %p`, `ssh -W %h:%p hop`, `cloudflared …`). |
+| [`--importSshConfig`](#importing-from-sshconfig) | Generate `[[profiles]]` from your `~/.ssh/config` aliases (Host patterns, `Include`, `ProxyJump`, `ProxyCommand`, keys), so hosts that already work with `ssh <alias>` need no second description. |
+
+> 中文简介：ssh-mcp-plus 基于 [ssh-mcp](https://github.com/tufantunc/ssh-mcp) 开发，保留其全部安全机制（命令分级、策略授权、审批、审计），并增加了经代理/隧道连接（`proxyCommand`）和从 `~/.ssh/config` 一键导入主机配置（`--importSshConfig`）。
+
+### Install (from source)
+
+```bash
+git clone https://github.com/MuQY1818/ssh-mcp-plus.git
+cd ssh-mcp-plus && npm ci && npm run build
+npm install -g .          # provides both `ssh-mcp-plus` and `ssh-mcp` commands
+```
+
+Generate profiles from hosts you already use, review them, and paste them into the config file described in [Configure](#2-configure):
+
+```bash
+ssh-mcp-plus --importSshConfig=my-server,my-bastion
+```
+
+The rest of this README is the ssh-mcp documentation, kept in sync with upstream; every `ssh-mcp` command below works the same with `ssh-mcp-plus`.
+
+**Relationship to ssh-mcp.** This is an independent project based on ssh-mcp (MIT), not an official release of it. Upstream changes are merged regularly; fixes that make sense upstream are offered there. Credit for the original design and nearly all of the code goes to the ssh-mcp authors and contributors — see [ACKNOWLEDGEMENTS.md](./ACKNOWLEDGEMENTS.md).
+
+---
 
 **SSH MCP Server** is a security-first Model Context Protocol server that gives LLM agents controlled SSH access to remote hosts — with command classification, policy-based authorization, human-in-the-loop approval, and full audit logging.
 

@@ -1,5 +1,11 @@
 # Acknowledgements
 
+**ssh-mcp-plus is based on [ssh-mcp](https://github.com/tufantunc/ssh-mcp) by Tufan Tunç and its contributors (MIT).** The architecture, the security model and almost all of the code are theirs; ssh-mcp-plus adds `proxyCommand` profiles and `--importSshConfig`. The acknowledgements below are ssh-mcp's own, kept as written, with issue links pointing at the upstream repository.
+
+---
+
+# Acknowledgements
+
 v2 is a near-total rewrite, which means a lot of contributed work shaped the
 result without being merged as commits. GitHub's contributor graph only counts
 merged commits, so this file exists to record what that graph cannot.

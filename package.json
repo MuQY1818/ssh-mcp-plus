@@ -1,11 +1,12 @@
 {
-  "name": "ssh-mcp",
+  "name": "ssh-mcp-plus",
   "license": "MIT",
-  "version": "2.29.0",
-  "description": "MCP server exposing policy-gated, audited SSH access for Linux and Windows hosts via the Model Context Protocol.",
-  "mcpName": "io.github.tufantunc/ssh-mcp",
+  "version": "0.1.0",
+  "description": "Policy-gated, audited SSH MCP server for LLM agents. Based on ssh-mcp, adding ProxyCommand profiles and ~/.ssh/config import.",
+  "mcpName": "io.github.MuQY1818/ssh-mcp-plus",
   "type": "module",
   "bin": {
+    "ssh-mcp-plus": "build/index.js",
     "ssh-mcp": "build/index.js"
   },
   "scripts": {
@@ -51,13 +52,13 @@
     "typescript": "^5.9.2",
     "vitest": "^5.0.5"
   },
-  "homepage": "https://github.com/tufantunc/ssh-mcp#readme",
+  "homepage": "https://github.com/MuQY1818/ssh-mcp-plus#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tufantunc/ssh-mcp.git"
+    "url": "git+https://github.com/MuQY1818/ssh-mcp-plus.git"
   },
   "bugs": {
-    "url": "https://github.com/tufantunc/ssh-mcp/issues"
+    "url": "https://github.com/MuQY1818/ssh-mcp-plus/issues"
   },
   "keywords": [
     "ssh",
@@ -69,13 +70,19 @@
     "automation",
     "remote",
     "cli",
-    "typescript"
+    "typescript",
+    "proxycommand",
+    "ssh-config",
+    "ssh-mcp"
   ],
-  "author": "tufantunc",
+  "author": "MuQY1818",
   "engines": {
     "node": "^18.19.0 || >=20.6.0"
   },
   "optionalDependencies": {
     "@napi-rs/keyring": "^2.1.1"
-  }
+  },
+  "contributors": [
+    "Tufan Tunç (original ssh-mcp, https://github.com/tufantunc/ssh-mcp)"
+  ]
 }

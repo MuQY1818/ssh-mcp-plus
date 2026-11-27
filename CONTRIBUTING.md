@@ -1,5 +1,7 @@
 # Contributing to ssh-mcp
 
+> **ssh-mcp-plus note.** This guide comes from upstream [ssh-mcp](https://github.com/tufantunc/ssh-mcp) and its rules apply here too. Issues and pull requests for ssh-mcp-plus go to [MuQY1818/ssh-mcp-plus](https://github.com/MuQY1818/ssh-mcp-plus); a change that belongs in ssh-mcp itself is better proposed upstream, and will arrive here with the next merge. Mentions of "my" tools below are the upstream author's.
+
 Thank you for your interest in contributing to ssh-mcp! Your help is greatly appreciated. Please follow these guidelines to make the process smooth for everyone.
 
 ## How to Contribute
