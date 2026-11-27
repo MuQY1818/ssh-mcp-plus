@@ -154,7 +154,7 @@ export const KNOWN_FLAGS = [
   'disableApproval', 'opaUrl', 'opaFailClosed', 'opaTimeoutMs',
   'commandQuota', 'approvalGrantTtl',
   'auditEntropyScan', 'auditTamperEvident',
-  'otelEndpoint', 'otelServiceName', 'dumpToolHashes',
+  'otelEndpoint', 'otelServiceName', 'dumpToolHashes', 'importSshConfig', 'sshConfig',
 ] as const;
 
 export type Flag = (typeof KNOWN_FLAGS)[number];

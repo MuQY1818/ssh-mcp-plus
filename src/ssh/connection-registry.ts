@@ -5,6 +5,8 @@ import { resolveCredentials } from '../config/credential-resolver.js';
 import { SSHConnection } from './connection.js';
 import type { HostKeyMode } from './host-key.js';
 import type { ClientChannel } from 'ssh2';
+import type { Duplex } from 'node:stream';
+import { spawnProxyCommand } from './proxy-command.js';
 import {
   planReload,
   type CloseReason,
@@ -86,8 +88,9 @@ export class ConnectionRegistry {
         // Once the connection drops, that channel is dead, so reconnecting the
         // same SSHConnection reuses a corpse and always fails — which used to
         // burn one tool call on every reconnect before the retry rebuilt it.
-        // Discard the object so the hop is re-established below.
-        if (conn && profile.via && !conn.isConnected()) {
+        // Discard the object so the hop is re-established below. The same holds for a
+        // proxyCommand: its process exits with the connection, so the socket is gone too.
+        if (conn && (profile.via || profile.proxyCommand) && !conn.isConnected()) {
           const dead = conn;
           await dead.close().catch(() => {});
           if (this.connections.get(profile.name) === dead) this.connections.delete(profile.name);
@@ -95,8 +98,10 @@ export class ConnectionRegistry {
         }
 
         if (!conn) {
-          let bastionSock: ClientChannel | undefined;
-          if (profile.via) {
+          let bastionSock: Duplex | undefined;
+          if (profile.proxyCommand) {
+            bastionSock = (await spawnProxyCommand(profile)).sock;
+          } else if (profile.via) {
             const bastionConn = await this.getOrCreate(profile.via);
             const bastionClient = bastionConn.getClient();
             bastionSock = await new Promise<ClientChannel>((resolve, reject) => {

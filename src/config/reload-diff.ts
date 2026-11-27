@@ -11,6 +11,7 @@ export const CONNECTION_FIELDS: readonly (keyof Profile)[] = [
   'keychainEntry',
   'cert',
   'via',
+  'proxyCommand',
   'trustedHostKey',
   'keyboardInteractive',
 ];

@@ -63,6 +63,7 @@ export function registerResources(
           auth: profile.auth,
           approvalPolicy: profile.approvalPolicy,
           via: profile.via,
+          proxyCommand: profile.proxyCommand,
           workdir: profile.workdir,
           tty: profile.tty,
           timeout: profile.timeout,

@@ -34,6 +34,16 @@ async function main() {
     return;
   }
 
+  // Prints [[profiles]] for ssh_config aliases and exits; reads no ssh-mcp config.
+  if (argv.importSshConfig !== undefined) {
+    const { importSshHosts, listAliases, renderImport } = await import('./config/ssh-config-import.js');
+    const { homedir } = await import('node:os');
+    const sshConfig = argv.sshConfig || `${homedir()}/.ssh/config`;
+    const aliases = argv.importSshConfig ? argv.importSshConfig.split(',').map((a) => a.trim()).filter(Boolean) : listAliases(sshConfig);
+    process.stdout.write(renderImport(importSshHosts(aliases, sshConfig)));
+    return;
+  }
+
   // Before the config load; `parseStartupFlags` says why.
   const { hostKeyMode, opa, http } = parseStartupFlags(argv);
 

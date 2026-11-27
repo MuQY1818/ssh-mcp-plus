@@ -169,6 +169,9 @@ export const profileSchema = z.object({
   keyRef: z.string().optional(),
   keychainEntry: z.string().optional(),
   via: z.string().optional(),
+  // A local command line run through the platform shell, as OpenSSH's ProxyCommand. Trimmed and
+  // non-empty for the same reason as trustedHostKey: a blank one would silently connect direct.
+  proxyCommand: z.string().trim().min(1, 'proxyCommand cannot be empty').optional(),
   // Drives the role-binding tier. Without it the tier is guessed from the
   // profile name, and an unrecognised name resolves to the strictest tier.
   group: z.string().optional(),
@@ -225,7 +228,15 @@ export const profileSchema = z.object({
   // upper bounds as [defaults], for the same reason.
   transferMaxBytes: z.number().int().positive().max(Number.MAX_SAFE_INTEGER).optional(),
   transferTimeoutMs: z.number().int().positive().max(2_147_483_647).optional(),
-}).strict();
+}).strict().superRefine((p, ctx) => {
+  if (p.via && p.proxyCommand) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['proxyCommand'],
+      message: 'set either via or proxyCommand, not both (chain a bastion inside the command instead, e.g. ssh -W %h:%p bastion)',
+    });
+  }
+});
 
 /**
  * Overrides merged over the compiled-in DEFAULT_RULES at startup.

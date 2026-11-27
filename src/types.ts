@@ -17,6 +17,11 @@ export interface Profile {
   keyRef?: string;
   keychainEntry?: string;
   via?: string;
+  /**
+   * Local command whose stdin/stdout carry the SSH stream, as OpenSSH's ProxyCommand
+   * (`nc -X connect -x 127.0.0.1:7890 %h %p`). Tokens: %h %p %r %n %%. Exclusive with `via`.
+   */
+  proxyCommand?: string;
   /** Explicit policy tier (prod | staging | dev | custom). */
   group?: string;
   workdir?: string;
